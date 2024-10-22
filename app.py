@@ -137,5 +137,9 @@ def limpar():
     session.pop('historico', None)
     return redirect(url_for('chat'))
 
+#if __name__ == '__main__':
+#    app.run(debug=True)
+
 if __name__ == '__main__':
-    app.run(debug=True)
+    port = int(os.environ.get("PORT", 10000))  # Obtém a porta do ambiente ou usa 5000 como padrão
+    app.run(host='0.0.0.0', port=port)  # Escuta em todas as interfaces de rede
