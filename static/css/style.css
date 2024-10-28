@@ -33,7 +33,6 @@
     margin: 0 0 15px 0;
     font-weight: bold;
     color: var(--cor-preta);
-    border-bottom: 2px solid var(--cor-preta);
     padding-bottom: 5px;
   }
 
@@ -104,54 +103,6 @@
     border-bottom-color: var(--cor-botao-hover);
   }
 
-  .button {
-    width: 120px;
-    border: 2px solid var(--cor-preta);
-    background-color: var(--cor-principal);
-    color: var(--cor-branca);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-    margin-left: 10px;
-    font-weight: bold;
-    border-radius: 5px;
-    position: relative;
-    transition: all 0.2s ease;
-    box-shadow: none;
-  }
-
-  .button:hover {
-    box-shadow: 5px 5px 0 var(--cor-preta);
-    transform: translate(-5px, -5px);
-  }
-
-  .button i {
-    margin-right: 5px;
-    font-size: 16px;
-  }
-
-  .chat-container {
-    width: 50%;
-    height: 90vh;
-    border: 2px solid var(--cor-preta);
-    display: flex;
-    flex-direction: column;
-    background-color: var(--cor-branca);
-    border-radius: 10px 10px 0 0;
-  }
-
-  .chat-header {
-    background-color: var(--cor-preta);
-    color: var(--cor-branca);
-    padding: 20px;
-    text-align: center;
-    position: relative;
-    border-radius: 7px 7px 0 0;
-    display: flex;
-    justify-content: space-between;
-    width: 100%;
-  }
 
   .chat-header h1 {
     font-size: 24px;
@@ -165,14 +116,14 @@
     text-transform: capitalize;
   }
 
-  #limpar-form .button {
+  /* #limpar-form .button {
     border-color: var(--cor-branca);
   }
 
   #limpar-form .button:hover {
     box-shadow: 5px 5px 0 var(--cor-branca);
     transform: translate(-5px, -5px);
-  }
+  } */
 
   .chat-history {
     flex-grow: 1;
@@ -221,7 +172,7 @@
     color: var(--cor-system-texto);
     align-self: flex-start;
     border-radius: 10px 10px 10px 0px;
-    box-shadow: -5px 5px 0 var(--cor-preta);
+
   }
 
   .user-message {
@@ -229,7 +180,7 @@
     color: var(--cor-branca);
     align-self: flex-end;
     border-radius: 10px 10px 0px 10px;
-    box-shadow: 5px 5px 0 var(--cor-preta);
+
   }
 
   .user-message p {
@@ -241,6 +192,7 @@
     padding: 10px;
     border-top: 2px solid var(--cor-preta);
     background-color: var(--cor-branca);
+    border-radius: 0 0 20px 20px;
   }
 
   .chat-input form {
@@ -296,3 +248,86 @@
       content: '...';
     }
   }
+
+  :root {
+    --cor-fundo: #f0f4f8;
+    --cor-texto: #333;
+    --cor-preta: #000;
+    --cor-branca: #fff;
+    --cor-principal: #007acc; /* Azul correspondente ao visual do site */
+    --cor-botao-hover: #005a9e;
+    --cor-system-mensagem: #e3f2fd; /* Azul claro para mensagens do sistema */
+    --cor-timestamp: #555;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: var(--cor-fundo);
+    color: var(--cor-texto);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+h1 {
+    font-size: 24px;
+    color: var(--cor-principal);
+}
+
+.chat-container {
+    width: 60%;
+    height: 80vh;
+    border: 2px solid var(--cor-principal);
+    display: flex;
+    flex-direction: column;
+    background-color: var(--cor-branca);
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.chat-header {
+    background-color: var(--cor-principal);
+    color: var(--cor-branca);
+    padding: 20px;
+    text-align: center;
+    border-radius: 10px 10px 0 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.chat-history {
+    flex-grow: 1;
+    padding: 20px;
+    overflow-y: auto;
+    background-color: var(--cor-fundo);
+}
+
+
+
+.user-message {
+    background-color: var(--cor-principal);
+    color: var(--cor-branca);
+    align-self: flex-end;
+}
+
+
+/* Botão com estilo oval */
+.button {
+  background-color: #005682; /* Cor azul escura para o estado normal */
+  color: var(--cor-branca);
+  border: none;
+  cursor: pointer;
+  border-radius: 30px; /* Estilo oval */
+  padding: 10px 30px; /* Aumentando o padding para uma forma mais oval */
+  font-weight: bold;
+  font-size: 14px;
+  transition: background-color 0.3s ease;
+  margin-left: 10px;
+}
+
+/* Estado hover do botão */
+.button:hover {
+  background-color: #00bcd4; /* Cor azul clara para o estado hover */
+}

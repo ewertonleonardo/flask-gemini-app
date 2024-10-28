@@ -1,0 +1,18 @@
+[
+    {
+        "tipo": "user",
+        "conteudo": "Olá"
+    },
+    {
+        "tipo": "assistant",
+        "conteudo": "<p>Olá! Somos do Núcleo Mason de Odontologia Moderna. Como posso ajudar você hoje? 😊</p>"
+    },
+    {
+        "tipo": "user",
+        "conteudo": "Queria saber quais serviços vcs tem disponíveis"
+    },
+    {
+        "tipo": "assistant",
+        "conteudo": "<p>Olá! Somos do Núcleo Mason de Odontologia Moderna. Como posso ajudar você hoje? 😊</p>\n\n<p>Que ótimo! Temos uma variedade de serviços para cuidar do seu sorriso e bem-estar.  Podemos oferecer:</p>\n\n<ul>\n<li><strong>Check-up Digital Odontológico:</strong> Uma avaliação completa da sua saúde bucal com tecnologia de ponta para diagnósticos precisos.</li>\n<li><strong>Facetas de Porcelana:</strong> Para um sorriso esteticamente harmonioso e duradouro, corrigindo imperfeições nos dentes.</li>\n<li><strong>Harmonização Facial:</strong> Realçando a sua beleza natural com procedimentos estéticos que consideram a anatomia facial, saúde bucal e estética.</li>\n<li><strong>Ultrassom Microfocado HIFU:</strong> Tecnologia avançada para tratamentos bucais e faciais, com soluções inovadoras e eficazes.</li>\n<li><strong>Laserterapia e Laser Cirúrgico:</strong> Tratamentos menos invasivos e recuperação mais rápida com a utilização de laser.</li>\n<li><strong>Odontologia Personalizada para Atletas:</strong> Serviços especializados para prevenir lesões e melhorar o desempenho esportivo.</li>\n<li><strong>Day Clinic para Executivos:</strong> Atendimento rápido e eficaz, ideal para profissionais com agenda apertada.</li>\n<li><strong>Tratamento de Halitose:</strong> Identificando e eliminando as causas do mau hálito, garantindo um hálito fresco e saudável.</li>\n</ul>\n<p>Em qual desses serviços você se interessou mais? 😊</p>"
+    }
+]
