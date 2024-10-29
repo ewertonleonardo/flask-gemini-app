@@ -3,3 +3,6 @@ __pycache__/
 .env
 *.pyc
 comandos.txt
+system_prompt copy.txt
+app.old
+app.log

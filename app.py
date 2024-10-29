@@ -1,208 +1,132 @@
-from flask import Flask, render_template, request, session, redirect, url_for, jsonify
-import google.generativeai as genai
+# app.py
+import os
+from flask import Flask, render_template, request, session, jsonify, redirect
+from dotenv import load_dotenv
 import markdown
 import bleach
-import secrets
 import logging
-from datetime import datetime
-from dotenv import load_dotenv
-import os
-from groq import Groq
+import json
+import google.generativeai as genai
 
-# Carregar as variáveis de ambiente do arquivo .env
+# Load environment variables
 load_dotenv()
 
-# Obter as chaves de API do Gemini e Groq
-GEMINI_API_KEY = os.getenv('GOOGLE_GEMINI_API_KEY', None)
-GROQ_API_KEY = os.getenv('GROQ_API_KEY')
-
-# Selecionar o modelo a ser usado: 'gemini' ou 'groq'
-MODELO_SELECIONADO = os.getenv('MODELO_SELECIONADO', 'gemini').lower()
-
-# Prioridade: Configurar a biblioteca do Google se a chave do Gemini estiver disponível e o modelo selecionado for 'gemini'
-if GEMINI_API_KEY is not None and MODELO_SELECIONADO == 'gemini':
-    genai.configure(api_key=GEMINI_API_KEY)
-    groq_client = None
-# Configurar o cliente do Groq se a chave do Groq estiver disponível e o modelo selecionado for 'groq'
-elif GROQ_API_KEY and MODELO_SELECIONADO == 'groq':
-    groq_client = Groq(api_key=GROQ_API_KEY)
-else:
-    GEMINI_API_KEY = None
-    GROQ_API_KEY = None
-    groq_client = None
-    raise ValueError("Nenhuma API Key habilitada ou modelo inválido selecionado. Verifique o arquivo .env para as chaves de API do Gemini ou do Groq.")
-
-app = Flask(__name__)
-app.secret_key = os.getenv('FLASK_SECRET_KEY', secrets.token_hex(16))
-
-# Configuração de Logging para facilitar a depuração
-logging.basicConfig(level=logging.DEBUG)
-
-# Função para carregar o prompt de sistema a partir do arquivo
-def load_system_prompt():
-    prompt_path = os.path.join(os.getcwd(), 'prompts', 'system_prompt.txt')
-    try:
-        with open(prompt_path, 'r', encoding='utf-8') as file:
-            return file.read()
-    except FileNotFoundError:
-        logging.error(f"Arquivo system_prompt.txt não encontrado em {prompt_path}. Usando prompt padrão.")
-        return "Você é um assistente útil."
-
-# Função para carregar o FAQ
-def load_faq():
-    faq_path = os.path.join(os.getcwd(), 'prompts', 'faq.txt')
-    try:
-        with open(faq_path, 'r', encoding='utf-8') as file:
-            return file.read()
-    except FileNotFoundError:
-        logging.error(f"Arquivo faq.txt não encontrado em {faq_path}.")
-        return ""
-
-# Carregar o system_prompt e o FAQ
-system_prompt = load_system_prompt()
-faq_content = load_faq()
-
-# Obter parâmetros do LLM do .env
-TEMPERATURA = float(os.getenv('TEMPERATURA', 0.1))
-MAX_OUTPUT_TOKENS = int(os.getenv('MAX_OUTPUT_TOKENS', 8192))
-TOP_P = float(os.getenv('TOP_P', 1.00))
+# Read API key and parameters
+GOOGLE_GEMINI_API_KEY = os.getenv('GOOGLE_GEMINI_API_KEY')
+TEMPERATURA = float(os.getenv('TEMPERATURA', 0.3))
+MAX_OUTPUT_TOKENS = int(os.getenv('MAX_OUTPUT_TOKENS', 256))
+TOP_P = float(os.getenv('TOP_P', 1.0))
 TOP_K = int(os.getenv('TOP_K', 1))
 
-# Função para verificar se a pergunta é sobre a Goformance
-def is_question_about_goformance(pergunta):
-    keywords = ['goformance', 'serviços', 'agência', 'marketing', 'empresa']
-    return any(keyword in pergunta.lower() for keyword in keywords)
+# Configure the generative AI client
+genai.configure(api_key=GOOGLE_GEMINI_API_KEY)
 
-def gerar_resposta_com_gemini(prompt_text):
-    try:
-        model = genai.GenerativeModel("gemini-1.5-flash")
-        generation_config = genai.types.GenerationConfig(
-            temperature=TEMPERATURA,
-            max_output_tokens=MAX_OUTPUT_TOKENS,
-            top_p=TOP_P,
-            top_k=TOP_K
-        )
-        response = model.generate_content(prompt_text, generation_config=generation_config)
-        return response.text.strip()
-    except Exception as e:
-        logging.error(f"Erro ao gerar resposta com Gemini: {e}")
-        return f'Desculpe, ocorreu um erro ao gerar a resposta: {str(e)}'
+# Read the system prompt
+try:
+    with open('prompts/system_prompt.txt', 'r', encoding='utf-8') as f:
+        system_prompt = f.read()
+except FileNotFoundError:
+    system_prompt = ""  # Or provide a default prompt
+    logging.error("system_prompt.txt not found. Please ensure the file exists.")
 
-def gerar_resposta_com_groq(prompt_text):
-    try:
-        if groq_client is None:
-            raise ValueError("Cliente Groq não está configurado.")
-        stream = groq_client.chat.completions.create(
-            messages=[
-                {
-                    "role": "system",
-                    "content": system_prompt
-                },
-                {
-                    "role": "user",
-                    "content": prompt_text,
-                }
-            ],
-            model="llama3-8b-8192",
-            temperature=TEMPERATURA,
-            max_tokens=MAX_OUTPUT_TOKENS,
-            top_p=TOP_P,
-            stop=None,
-            stream=True,
-        )
-        resposta = ""
-        for chunk in stream:
-            if chunk.choices and chunk.choices[0].delta and chunk.choices[0].delta.content:
-                resposta += chunk.choices[0].delta.content
-        return resposta.strip()
-    except Exception as e:
-        logging.error(f"Erro ao gerar resposta com Groq: {e}")
-        return f'Desculpe, ocorreu um erro ao gerar a resposta: {str(e)}'
+# Set up logging
+logging.basicConfig(filename='app.log', level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
-# Função para gerar a resposta, escolhendo entre Gemini e Groq
-def gerar_resposta(pergunta, historico_conversa):
-    # Limitar o histórico a um número máximo de mensagens
-    max_messages = 5
-    historico_conversa = historico_conversa[-max_messages*2:]
+# Initialize Flask app
+app = Flask(__name__)
+app.secret_key = 'your_secret_key'  # Replace with a secure random secret key
 
-    # Construir o histórico da conversa para incluir no prompt
-    historico_texto = ''
-    for entrada in historico_conversa:
-        if entrada['tipo'] == 'user':
-            historico_texto += f"Usuário: {entrada['conteudo']}\n"
-        else:
-            historico_texto += f"Assistente: {entrada['conteudo']}\n"
-
-    # Verificar se a pergunta é sobre a Goformance
-    if is_question_about_goformance(pergunta):
-        prompt_text = f"{system_prompt}\n\n{faq_content}\n\n{historico_texto}\n\nPergunta: {pergunta}\nResposta em Markdown:"
-    else:
-        prompt_text = f"{system_prompt}\n\n{historico_texto}\n\nPergunta: {pergunta}\nResposta em Markdown:"
-
-    logging.debug(f"Prompt enviado ao modelo ({MODELO_SELECIONADO}):\n{prompt_text}")
-
-    if MODELO_SELECIONADO == "gemini" and GEMINI_API_KEY:
-        return gerar_resposta_com_gemini(prompt_text)
-    elif MODELO_SELECIONADO == "groq" and GROQ_API_KEY:
-        return gerar_resposta_com_groq(prompt_text)
-    else:
-        logging.error(f"Modelo desconhecido ou chave de API não configurada: {MODELO_SELECIONADO}")
-        return "Modelo desconhecido ou chave de API não configurada. Por favor, escolha entre 'gemini' e 'groq'."
-
-def obter_resposta(pergunta):
-    if not pergunta:
-        return "Por favor, faça uma pergunta."
-
-    # Incluir histórico da conversa
-    historico_conversa = session.get('historico', [])
-
-    resposta_markdown = gerar_resposta(pergunta, historico_conversa)
-    resposta_html = markdown.markdown(resposta_markdown)
-    allowed_tags = bleach.sanitizer.ALLOWED_TAGS.union(['p', 'ul', 'ol', 'li', 'strong', 'em', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'a'])
-    resposta_html = bleach.clean(resposta_html, tags=allowed_tags, strip=True)
-    return resposta_html
-
-MAX_HISTORICO = 20  # Ajuste conforme necessário
-
-@app.route('/', methods=['GET'])
-def chat():
-    session['historico'] = []  # Limpar o histórico ao recarregar a página
-    timestamp = datetime.now().strftime("%H:%M")
-    return render_template('index.html', timestamp=timestamp)
+@app.route('/')
+def index():
+    if 'historico' not in session:
+        session['historico'] = []
+    return render_template('index.html')
 
 @app.route('/get_response', methods=['POST'])
 def get_response():
     data = request.get_json()
     pergunta = data.get('pergunta', '').strip()
-
-    logging.info(f"Pergunta recebida: {pergunta} (Modelo: {MODELO_SELECIONADO})")
-
     if not pergunta:
-        return jsonify({'erro': 'Por favor, faça uma pergunta.'})
+        return jsonify({'erro': 'Pergunta vazia.'})
 
-    session['historico'] = session.get('historico', [])
-    session['historico'].append({'tipo': 'user', 'conteudo': pergunta})
-    session.modified = True
+    # Log pergunta no terminal
+    print(f"Pergunta do usuário: {pergunta}")
 
-    resposta = obter_resposta(pergunta)
+    # Append user's message to history
+    historico = session.get('historico', [])
 
-    # Adicionar a resposta do assistente ao histórico
-    session['historico'].append({'tipo': 'assistant', 'conteudo': resposta})
-    session.modified = True
+    # Add system prompt as the first user message, if not added already
+    if system_prompt and not historico:
+        historico.append({'role': 'user', 'parts': [system_prompt]})
 
-    # Limitar o histórico geral
-    if len(session['historico']) > MAX_HISTORICO:
-        session['historico'] = session['historico'][-MAX_HISTORICO:]
-        session.modified = True
+    # Add user's question to history
+    mensagem_usuario = {'role': 'user', 'parts': [pergunta]}
+    historico.append(mensagem_usuario)
+    session['historico'] = historico
 
-    logging.info(f"Resposta enviada: {resposta}")
+    # Log prompt enviado ao modelo
+    prompt_para_envio = json.dumps(historico, ensure_ascii=False)
+    logging.info(f"Prompt enviado ao modelo: {prompt_para_envio}")
 
-    return jsonify({'resposta': resposta})
+    # Create the model
+    model = genai.GenerativeModel("gemini-1.5-flash")
+
+    # Start chat
+    chat = model.start_chat(
+        history=historico
+    )
+
+    # Send the user's message with generation configuration
+    try:
+        response = chat.send_message(
+            pergunta,
+            generation_config=genai.GenerationConfig(
+                temperature=TEMPERATURA,
+                max_output_tokens=MAX_OUTPUT_TOKENS,
+                top_p=TOP_P,
+                top_k=TOP_K
+            )
+        )
+
+        # Get the assistant's reply in markdown format
+        resposta_markdown = response.text
+
+        # Log resposta do modelo no terminal e no arquivo de log
+        print(f"Resposta do modelo: {resposta_markdown}")
+        logging.info(f"Resposta recebida do modelo: {resposta_markdown}")
+
+        # Convert markdown to HTML
+        resposta_html = markdown.markdown(resposta_markdown)
+
+        # Sanitize the HTML to allow specific tags for formatting
+        allowed_tags = bleach.sanitizer.ALLOWED_TAGS.union(
+            ['p', 'ul', 'ol', 'li', 'strong', 'em', 'h1', 'h2', 'h3', 'a', 'br']
+        )
+        resposta_html = bleach.clean(
+            resposta_html,
+            tags=allowed_tags,
+            attributes={'a': ['href']},
+            strip=True
+        )
+
+        # Append assistant's message to history
+        mensagem_assistente = {'role': 'model', 'parts': [resposta_html]}
+        historico.append(mensagem_assistente)
+        session['historico'] = historico
+
+        return jsonify({'resposta': resposta_html})
+
+    except Exception as e:
+        logging.error("Erro ao tentar enviar mensagem ao modelo.", exc_info=True)
+        return jsonify({'erro': 'Erro ao obter resposta do modelo.'})
 
 @app.route('/limpar', methods=['POST'])
 def limpar():
-    session.pop('historico', None)
-    return redirect(url_for('chat'))
+    session.clear()
+    return redirect('/')
 
+#if __name__ == '__main__':
+#    app.run(debug=True)
 if __name__ == '__main__':
-    app.run(debug=True)
+    port = int(os.environ.get("PORT", 10000))  # Obtém a porta do ambiente ou usa 5000 como padrão
+    app.run(host='0.0.0.0', port=port)  # Escuta em todas as interfaces de rede

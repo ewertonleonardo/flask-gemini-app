@@ -1,17 +1,4 @@
 /* style.css */
-:root {
-    /* Variáveis de cores */
-    --cor-fundo: #f0f0f0;
-    --cor-texto: #333;
-    --cor-preta: #000;
-    --cor-branca: #fff;
-    /* --cor-principal: #007bff; */
-    --cor-principal: #9E66FF;
-    --cor-botao-hover: #0056b3;
-    /* --cor-system-mensagem: #e0e0e0; */
-    --cor-system-mensagem: #dbf25a;
-    --cor-timestamp: #555;
-  }
 
   * {
     margin: 0;
@@ -105,7 +92,7 @@
 
 
   .chat-header h1 {
-    font-size: 24px;
+    font-size: 1.5rem;
     font-weight: bold;
     margin: 0;
     color: var(--cor-branca);
@@ -297,14 +284,26 @@ h1 {
     align-items: center;
 }
 
+
+.logo {
+  width: 30%;
+  margin-right: 10px;
+}
+
+.header-content{
+  display: flex;
+  flex-direction: row;
+  width: 80%;
+  justify-content: space-between;
+  align-items: center;
+}
+
 .chat-history {
     flex-grow: 1;
     padding: 20px;
     overflow-y: auto;
     background-color: var(--cor-fundo);
 }
-
-
 
 .user-message {
     background-color: var(--cor-principal);

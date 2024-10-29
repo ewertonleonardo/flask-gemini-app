@@ -11,7 +11,10 @@
 <body>
     <div class="chat-container">
         <div class="chat-header">
-            <h1>Atendente Núcleo Mazon - By Ewerton</h1>
+            <div class="header-content">
+                <img src="https://nucleomazonodontologia.com.br/wp-content/uploads/2023/06/logotipo-branco.png" alt="Logo Núcleo Mazon" class="logo">
+                <h1>Atendente Núcleo Mazon - By Ewerton</h1>
+            </div>
             <form method="post" action="/limpar" id="limpar-form">
                 <button type="submit" class="button"><i class="fas fa-trash"></i> Limpar</button>
             </form>
@@ -19,9 +22,9 @@
         <div class="chat-history" id="chat-container">
             {% if session.get('historico') %}
                 {% for mensagem in session['historico'] %}
-                    <div class="message {% if mensagem['tipo'] == 'user' %}user-message{% else %}system-message{% endif %}">
-                        <p class="message-title">{% if mensagem['tipo'] == 'user' %}Usuário{% else %}Assistente{% endif %}</p>
-                        <p>{{ mensagem['conteudo']|safe }}</p>
+                    <div class="message {% if mensagem['role'] == 'user' %}user-message{% else %}system-message{% endif %}">
+                        <p class="message-title">{% if mensagem['role'] == 'user' %}Usuário{% else %}Assistente{% endif %}</p>
+                        <p>{{ mensagem['parts'][0]|safe }}</p>
                     </div>
                 {% endfor %}
             {% else %}
