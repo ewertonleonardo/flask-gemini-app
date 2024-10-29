@@ -81,4 +81,5 @@ As respostas e erros são registrados no arquivo `app.log`. Para resolver proble
 
 ## Licença
 Este projeto foi criado por [Ewerton Leonardo](https://www.linkedin.com/in/ewertonleonardoap/). Todos os Direitos Reservados.
-\n Este projeto é de uso proprietário da [Goformance](https://goformance.com.br).
+
+Este projeto é de uso proprietário da [Goformance](https://goformance.com.br).
