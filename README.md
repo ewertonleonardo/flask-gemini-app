@@ -80,6 +80,15 @@ As respostas e erros são registrados no arquivo `app.log`. Para resolver proble
 - Confirme se o `GOOGLE_GEMINI_API_KEY` é válido e está corretamente definido no `.env`.
 
 ## Licença
-Este projeto foi criado por [Ewerton Leonardo](https://www.linkedin.com/in/ewertonleonardoap/). Todos os Direitos Reservados.
+Este projeto foi criado por, e é de uso proprietário de [Ewerton Leonardo](https://www.linkedin.com/in/ewertonleonardoap/). Todos os Direitos Reservados.
 
-Este projeto é de uso proprietário da [Goformance](https://goformance.com.br).
+## Render.com
+Build command: pip install -r requirements.txt
+Start command: python app.py
+
+### Environment
+GOOGLE_GEMINI_API_KEY
+MAX_OUTPUT_TOKENS
+TEMPERATURA
+TOP_K
+TOP_P
