@@ -1,110 +1,171 @@
-# SEO Mentor Chatbot
+# Mentor de SEO Chatbot
 
-## Descrição
+## Descrição Detalhada
 
-Este projeto consiste em um chatbot web desenvolvido utilizando Python com o framework Flask e a API Gemini do Google. O chatbot é projetado para atuar como um **Mentor de SEO altamente especializado**, capaz de auxiliar usuários no aprendizado de **SEO Técnico, OnPage e OffPage**.
+Este projeto consiste em um chatbot interativo projetado para atuar como um mentor de SEO (Otimização para Mecanismos de Busca). O chatbot utiliza o modelo de linguagem Gemini 1.5 Flash do Google Generative AI para fornecer respostas e orientações sobre diversos tópicos de SEO, desde SEO técnico e On-Page até estratégias Off-Page.
 
-O objetivo principal deste chatbot é fornecer mentoria e orientação em SEO, cobrindo todos os aspectos essenciais para um profissional de SEO completo, desde o nível júnior até o C-Level. O chatbot utiliza o modelo de linguagem Gemini para explicar conceitos complexos de SEO de forma acessível, oferecer feedback personalizado e inspirar os alunos a alcançar seu pleno potencial na área de SEO.
+**Objetivo:**
+
+O principal objetivo deste chatbot é facilitar o aprendizado de SEO de forma interativa e personalizada. Ele simula uma conversa com um mentor experiente, permitindo que usuários façam perguntas e recebam explicações, dicas e exemplos práticos sobre SEO.
+
+**Problema Solucionado:**
+
+O aprendizado de SEO pode ser complexo e desafiador, especialmente para iniciantes. Recursos online são abundantes, mas muitas vezes falta uma abordagem interativa e personalizada. Este chatbot visa solucionar essa dificuldade, oferecendo um ambiente de aprendizado dinâmico onde os usuários podem obter respostas para suas dúvidas de SEO de maneira rápida e acessível.
 
 **Funcionalidades Essenciais:**
 
-- **Interface de Chat Web:** Interface de usuário interativa para conversas em tempo real com o mentor de SEO.
-- **Integração com Google Gemini API:** Utiliza o modelo de linguagem Gemini para fornecer explicações detalhadas, exemplos práticos e feedback em SEO.
-- **Mentoria em SEO Técnico:** Explica táticas de SEO Técnico, como otimização de velocidade, arquitetura de site, dados estruturados e indexação.
-- **Mentoria em SEO OnPage:** Demonstra estratégias de SEO OnPage, incluindo pesquisa de palavras-chave, otimização de meta tags e criação de conteúdo.
-- **Mentoria em SEO OffPage:** Apresenta abordagens de SEO OffPage, como link building e gestão de reputação online.
-- **Feedback Personalizado:** Oferece feedback baseado em métricas de SEO e ferramentas como Google Search Console, SEMrush, etc.
-- **Estilo de Comunicação Envolvente:** Utiliza analogias, exemplos práticos e perguntas instigantes para facilitar o aprendizado.
-- **Indicação de Recursos Complementares:** Sugere guias oficiais, ferramentas, vídeos e comunidades para aprendizado contínuo em SEO.
+*   **Chat Interativo:** Interface de chat amigável para conversas em tempo real com o mentor de SEO.
+*   **Persona de Mentor de SEO:** O chatbot é configurado com um prompt de sistema para atuar como um especialista em SEO, fornecendo respostas relevantes e úteis.
+*   **Respostas em Markdown:** As respostas do chatbot são formatadas em Markdown, permitindo a inclusão de títulos, listas, links e blocos de código para melhor clareza e organização.
+*   **Histórico de Conversas:** O histórico de conversas é persistido usando sessões Flask, permitindo que os usuários revisitem interações anteriores durante a mesma sessão.
+*   **Interface Web Responsiva:** A interface web é projetada para ser responsiva e funcionar bem em diferentes dispositivos (desktops, tablets e smartphones).
+*   **Validação e Sanitização:** Validação de perguntas no backend para garantir que perguntas vazias não sejam processadas. Sanitização de HTML nas respostas para segurança.
+*   **Tratamento de Erros:** Tratamento robusto de erros, incluindo erros específicos da API Gemini, para fornecer mensagens de erro amigáveis e logs detalhados para depuração.
+*   **Configuração Flexível:** Temperatura do modelo Gemini configurável via variável de ambiente para ajustar a criatividade e aleatoriedade das respostas.
+
+**Público-Alvo:**
+
+*   Estudantes de SEO e marketing digital.
+*   Profissionais de marketing digital iniciantes.
+*   Empreendedores e proprietários de pequenos negócios que desejam aprender SEO para melhorar a visibilidade online de seus negócios.
+*   Qualquer pessoa interessada em aprender os fundamentos e estratégias de SEO de forma prática e interativa.
+
+## Tecnologias Empregadas
+
+*   **Backend:**
+    *   [Python](https://www.python.org/) - Linguagem de programação principal.
+    *   [Flask](https://flask.palletsprojects.com/) - Framework web para construir a aplicação backend e API.
+    *   [Google Generative AI Python SDK](https://pypi.org/project/google-generativeai/) - Biblioteca para interagir com os modelos Gemini do Google.
+    *   [python-dotenv](https://pypi.org/project/python-dotenv/) - Para carregar variáveis de ambiente a partir de arquivos `.env`.
+    *   [markdown](https://pypi.org/project/Markdown/) - Para converter texto Markdown em HTML.
+    *   [bleach](https://pypi.org/project/bleach/) - Para sanitizar HTML e remover tags indesejadas por segurança.
+
+*   **Frontend:**
+    *   HTML5 - Estrutura da página web.
+    *   CSS3 - Estilização da interface do usuário (`static/css/style.css`).
+    *   [JavaScript](https://www.javascript.com/) - Para interatividade no frontend (`static/js/chat.js` e [jQuery](https://jquery.com/)).
+    *   [jQuery](https://jquery.com/) - Biblioteca JavaScript para manipulação do DOM e requisições AJAX.
+    *   [Font Awesome](https://fontawesome.com/) - Biblioteca de ícones para a interface.
 
 ## Instruções de Instalação
 
-Siga estes passos para instalar e executar o chatbot SEO Mentor:
+**Pré-requisitos:**
 
-1. **Clone o repositório:**
+*   [Python](https://www.python.org/downloads/) (versão 3.x recomendada) instalado.
+*   [pip](https://pip.pypa.io/en/stable/installation/) (gerenciador de pacotes do Python) instalado.
+
+**Passos:**
+
+1.  **Clone o repositório:**
 
     ```bash
     git clone [URL do repositório]
-    cd flask-gemini-app
+    cd [nome do repositório]
     ```
 
-2. **Crie um ambiente virtual (opcional, mas recomendado):**
+2.  **Crie um ambiente virtual (recomendado):**
 
     ```bash
     python -m venv venv
+    venv\Scripts\activate  # No Windows
+    # source venv/bin/activate  # No Linux/macOS
     ```
 
-3. **Ative o ambiente virtual:**
-    - **No Windows:**
-
-        ```bash
-        venv\\Scripts\\activate
-        ```
-
-    - **No Linux/macOS:**
-
-        ```bash
-        source venv/bin/activate
-        ```
-
-4. **Instale as dependências:**
+3.  **Instale as dependências:**
 
     ```bash
     pip install -r requirements.txt
     ```
 
-5. **Configure as variáveis de ambiente:**
-    - Crie um arquivo `.env` na raiz do projeto.
-    - Adicione as seguintes variáveis, substituindo `SUA_CHAVE_API_GEMINI` e `SUA_CHAVE_SECRETA_FLASK` pelas suas chaves reais:
+4.  **Configure as variáveis de ambiente:**
 
-        ```env
-        GOOGLE_GEMINI_API_KEY=SUA_CHAVE_API_GEMINI
-        FLASK_SECRET_KEY=SUA_CHAVE_SECRETA_FLASK
+    *   Crie um arquivo `.env` na raiz do projeto.
+    *   Adicione as seguintes variáveis ao arquivo `.env`:
+
+        ```
+        GOOGLE_GEMINI_API_KEY=SUA_CHAVE_DE_API_GEMINI
+        FLASK_SECRET_KEY=uma_chave_secreta_segura  # Opcional (gerado automaticamente se não fornecida)
+        TEMPERATURA=0.5                             # Opcional (valor padrão 0.5)
+        PORT=10000                                  # Opcional (valor padrão 10000)
         ```
 
-        - **`GOOGLE_GEMINI_API_KEY`:**  Obtenha sua chave API no [Google AI Studio](https://makersuite.google.com/).
-        - **`FLASK_SECRET_KEY`:**  Gere uma chave secreta forte para o Flask. Pode usar `secrets.token_hex(16)` em Python para gerar uma.
+        Substitua `SUA_CHAVE_DE_API_GEMINI` pela sua chave de API do Gemini. Você pode obter uma chave de API no [Google AI Studio](https://makersuite.google.com/).
 
-    - **Opcional:** Configure a temperatura do modelo Gemini (padrão é 0.5):
+        `FLASK_SECRET_KEY` é usado para segurança das sessões do Flask. Se não for fornecido, uma chave secreta aleatória será gerada a cada inicialização.
 
-        ```env
-        TEMPERATURA=0.7
-        ```
+        `TEMPERATURA` controla a aleatoriedade das respostas do modelo Gemini. Valores mais baixos (próximos de 0) tornam as respostas mais determinísticas e focadas, enquanto valores mais altos (próximos de 1) tornam as respostas mais criativas e aleatórias. O valor padrão é 0.5.
 
-## Guia de Uso
+        `PORT` define a porta em que o aplicativo Flask será executado. O valor padrão é 10000.
 
-1. **Execute a aplicação Flask:**
+5.  **Execute o aplicativo:**
 
     ```bash
     python app.py
     ```
 
-2. **Acesse o Chatbot no Navegador:**
-    Abra seu navegador web e acesse o endereço `http://127.0.0.1:10000/` ou a porta que for exibida no terminal ao executar a aplicação.
+6.  **Acesse o aplicativo no seu navegador:**
 
-3. **Interaja com o Chatbot Mentor de SEO:**
-    Na interface web, faça perguntas sobre SEO, peça explicações sobre conceitos, solicite feedback sobre suas estratégias ou peça recomendações de recursos de aprendizado. O chatbot SEO Mentor irá guiá-lo em sua jornada de aprendizado em SEO.
+    Abra o navegador e acesse o endereço `http://localhost:10000` ou `http://127.0.0..1:10000`.
 
-4. **Limpar Histórico:**
-    Clique no botão "Limpar" para apagar o histórico de conversas da sessão atual.
+## Guia de Uso
+
+Ao acessar o aplicativo no navegador, você verá a interface do Mentor de SEO Chatbot. A interface é composta por:
+
+*   **Título:** "Mentor de SEO - By Ewerton" (ou título similar).
+*   **Botão "Limpar":** Limpa o histórico de conversas da sessão atual.
+*   **Histórico de Chat:** Exibe as mensagens trocadas entre o usuário e o sistema. Mensagens do usuário são exibidas em balões azuis ("Usuário"), e mensagens do sistema (chatbot) em balões verdes ("Sistema").
+*   **Barra de Entrada de Mensagem:** Um campo de texto (`textarea`) onde você pode digitar suas perguntas ou mensagens para o chatbot.
+*   **Botão "Enviar":** Envia a mensagem digitada para o chatbot. Você também pode pressionar a tecla "Enter" (sem Shift) para enviar a mensagem.
+
+**Exemplos de Perguntas:**
+
+Você pode fazer perguntas sobre diversos tópicos de SEO, como:
+
+*   **SEO Técnico:**
+    *   "O que é canonical tag e como usar?"
+    *   "Como otimizar a velocidade de carregamento do meu site?"
+    *   "O que é mobile-first indexing?"
+*   **SEO On-Page:**
+    *   "Como escolher as palavras-chave certas para o meu nicho?"
+    *   "Como otimizar títulos e meta descrições?"
+    *   "Quais são as melhores práticas para criar conteúdo otimizado para SEO?"
+*   **SEO Off-Page:**
+    *   "O que é link building e como conseguir backlinks de qualidade?"
+    *   "Como usar as redes sociais para SEO?"
+    *   "O que é guest blogging?"
+*   **Estratégias de SEO:**
+    *   "Como criar uma estratégia de SEO para um novo site?"
+    *   "Como analisar o desempenho de SEO do meu site?"
+    *   "Quais são as tendências de SEO para 2024?"
+
+Sinta-se à vontade para explorar e fazer perguntas sobre qualquer tópico relacionado a SEO. O chatbot está pronto para te ajudar a aprender e aprofundar seus conhecimentos!
 
 ## Diretrizes de Contribuição
 
-Contribuições são bem-vindas! Se você deseja contribuir para este projeto, siga estas diretrizes:
+Contribuições são bem-vindas! Se você tiver ideias para melhorar o chatbot, adicionar funcionalidades, corrigir bugs ou aprimorar a documentação, sinta-se à vontade para contribuir.
 
-1. **Fork o repositório.**
-2. **Crie um branch para sua feature ou correção de bug:** `git checkout -b feature/nova-feature` ou `git checkout -b fix/correcao-bug`.
-3. **Faça suas modificações e commits:** `git commit -m "Adiciona nova feature"`.
-4. **Envie suas mudanças para o seu fork:** `git push origin feature/nova-feature`.
-5. **Abra um Pull Request** para o repositório principal.
+**Como Contribuir:**
+
+1.  Faça um fork do repositório.
+2.  Crie uma branch com sua feature ou correção de bug (`git checkout -b minha-feature`).
+3.  Faça as alterações e commit (`git commit -m 'Adiciona nova feature...'`).
+4.  Envie para sua branch (`git push origin minha-feature`).
+5.  Abra um pull request.
+
+Por favor, siga as boas práticas de programação e o guia de estilo PEP 8 para Python ao contribuir com código Python.
 
 ## Licença
 
-Este projeto é distribuído sob a licença [MIT License](./LICENSE).
+**Todos os direitos reservados.**
 
-## Créditos
+Este projeto é de código fechado e todos os direitos são reservados ao autor. Nenhuma parte deste projeto pode ser reproduzida, distribuída ou modificada sem permissão expressa do autor, a menos que especificado de outra forma em uma licença comercial.
 
-Desenvolvido por: [Ewerton Leonardo](https://www.linkedin.com/in/ewertonleonardoap/)
+## Créditos e Agradecimentos
+
+*   Desenvolvido por [Seu Nome/Nome do Desenvolvedor] ([link para seu perfil/site, opcional]).
+*   Utiliza a API Gemini do Google Generative AI.
+*   Agradecimentos às bibliotecas de código aberto [Flask](https://flask.palletsprojects.com/), [python-dotenv](https://pypi.org/project/python-dotenv/), [Markdown](https://pypi.org/project/Markdown/), [bleach](https://pypi.org/project/bleach/), [jQuery](https://jquery.com/), [Font Awesome](https://fontawesome.com/) e outras bibliotecas mencionadas na seção "Tecnologias Empregadas".
 
 ---
-Este `README.md` foi gerado por Roo, um assistente de engenharia de software.
+
+*Última atualização: 13 de fevereiro de 2025*

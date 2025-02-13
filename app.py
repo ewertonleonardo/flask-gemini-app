@@ -26,7 +26,7 @@ app = Flask(__name__)
 app.secret_key = os.getenv('FLASK_SECRET_KEY', secrets.token_hex(16))  # Chave secreta para as sessões
 
 # Configuração de Logging para facilitar a depuração
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s') # Nível INFO e formatação
 
 # Definir uma função para carregar o prompt de sistema a partir do arquivo
 def load_system_prompt():
@@ -48,14 +48,14 @@ TEMPERATURA = float(os.getenv('TEMPERATURA', 0.5))  # Valor padrão 0.5
 score_cache = {}
 
 def gerar_resposta(pergunta, historico_conversa):
-    # Definir parâmetros do modelo diretamente no código
-    temperatura = TEMPERATURA  # Valor fixo de temperatura
+    # Definir parâmetros do modelo
+    temperatura = TEMPERATURA  # Temperatura configurável
 
     # Limitar o histórico a um número máximo de mensagens
     max_messages = 10  # Aumentado para manter mais contexto
-    historico_conversa = historico_conversa[-max_messages*2:]  # Cada mensagem do usuário e do assistente
+    historico_conversa = historico_conversa[-max_messages*2:]  # Mantém as últimas N mensagens
 
-    # Construir o histórico da conversa para incluir no prompt com roles
+    # Construir o histórico da conversa para incluir no prompt com roles usando f-strings
     historico_texto = ''
     for entrada in historico_conversa:
         if entrada['tipo'] == 'user':
@@ -72,9 +72,15 @@ def gerar_resposta(pergunta, historico_conversa):
         )
         response = model.generate_content(prompt_text, generation_config=generation_config)
         return response.text.strip()
-    except Exception as e:
-        logging.error(f"Erro ao gerar resposta: {e}")
-        return f'Desculpe, ocorreu um erro ao gerar a resposta: {str(e)}'
+    except genai.APIError as e: # Tratar erros específicos da API Gemini
+        logging.error(f"Erro na API Gemini: {e}")
+        return f'Desculpe, ocorreu um erro na API Gemini: {str(e)}'
+    except ValueError as e: # Tratar ValueErrors, como erros de configuração
+        logging.error(f"Erro de valor: {e}")
+        return f'Desculpe, ocorreu um erro de valor: {str(e)}'
+    except Exception as e: # Captura outras exceções genéricas
+        logging.error(f"Erro ao gerar resposta: {e}", exc_info=True) # Loga detalhes da exceção
+        return f'Desculpe, ocorreu um erro inesperado ao gerar a resposta.'
 
 def obter_resposta(pergunta):
     if not pergunta:
@@ -103,15 +109,15 @@ def chat():
 def get_response():
     data = request.get_json()
     pergunta = data.get('pergunta', '').strip()
-    
+
     logging.info(f"Pergunta recebida: {pergunta}")
 
-    if not pergunta:
+    if not pergunta: # Validação da pergunta no backend
         return jsonify({'erro': 'Por favor, faça uma pergunta.'})
 
     session['historico'] = session.get('historico', [])
     session['historico'].append({'tipo': 'user', 'conteudo': pergunta})
-    
+
     # Adicionar a mensagem "Respondendo..." com animação
     session['historico'].append({'tipo': 'assistant', 'conteudo': 'Respondendo<span class="dot-animated"></span>'})
     session.modified = True
