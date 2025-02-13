@@ -29,6 +29,7 @@ e este projeto segue as [Versões Semânticas](https://semver.org/spec/v2.0.0.ht
 - Refatorado código JavaScript inline de `index.html` para arquivo externo `static/js/chat.js`.
 - Melhorada a legibilidade do prompt na função `gerar_resposta()` em `app.py` com o uso de f-strings.
 - Adicionada validação da pergunta no backend em `/get_response` em `app.py`.
+- Correção informações do `README.md`
 
 ### Adicionado
 
