@@ -1,19 +1,21 @@
 <!-- index.html -->
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SDR Goformance</title>
+    <title>Mentor de SEO</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
+
 <body>
     <div class="chat-container">
         <!-- Título do chat -->
         <div class="chat-header">
-            <h1>SDR Goformance - By Ewerton</h1>
+            <h1>Mentor de SEO - By Ewerton</h1>
             <form method="post" action="/limpar" id="limpar-form">
                 <button type="submit" class="button"><i class="fas fa-trash"></i> Limpar</button>
             </form>
@@ -22,19 +24,19 @@
         <!-- Histórico de chat -->
         <div class="chat-history" id="chat-container">
             {% if session.get('historico') %}
-                {% for mensagem in session['historico'] %}
-                    <div class="message {% if mensagem['tipo'] == 'user' %}user-message{% else %}system-message{% endif %}">
-                        <p class="message-title">{% if mensagem['tipo'] == 'user' %}Usuário{% else %}Sistema{% endif %}</p>
-                        <p>{{ mensagem['conteudo']|safe }}</p>
-                        <span class="timestamp">{{ mensagem['timestamp'] }}</span>
-                    </div>
-                {% endfor %}
+            {% for mensagem in session['historico'] %}
+            <div class="message {% if mensagem['tipo'] == 'user' %}user-message{% else %}system-message{% endif %}">
+                <p class="message-title">{% if mensagem['tipo'] == 'user' %}Usuário{% else %}Sistema{% endif %}</p>
+                <p>{{ mensagem['conteudo']|safe }}</p>
+                <span class="timestamp">{{ mensagem['timestamp'] }}</span>
+            </div>
+            {% endfor %}
             {% else %}
-                <div class="message system-message">
-                    <p class="message-title">Sistema</p>
-                    <p>Inicie a conversa fazendo uma pergunta.</p>
-                    <span class="timestamp">{{ timestamp }}</span>
-                </div>
+            <div class="message system-message">
+                <p class="message-title">Sistema</p>
+                <p>Inicie a conversa fazendo uma pergunta.</p>
+                <span class="timestamp">{{ timestamp }}</span>
+            </div>
             {% endif %}
         </div>
 
@@ -48,19 +50,19 @@
     </div>
 
     <script>
-        $(document).ready(function(){
+        $(document).ready(function () {
             // Enviar a mensagem ao pressionar Enter
-            $('#pergunta').on('keydown', function(e){
+            $('#pergunta').on('keydown', function (e) {
                 if (e.key === 'Enter' && !e.shiftKey) {
                     e.preventDefault();
                     $('#chat-form').submit();
                 }
             });
 
-            $('#chat-form').on('submit', function(e){
+            $('#chat-form').on('submit', function (e) {
                 e.preventDefault();
                 var pergunta = $('#pergunta').val();
-                if(pergunta.trim() === ''){
+                if (pergunta.trim() === '') {
                     return;
                 }
                 var timestamp = new Date();
@@ -79,9 +81,9 @@
                     url: '/get_response',
                     method: 'POST',
                     contentType: 'application/json',
-                    data: JSON.stringify({'pergunta': pergunta}),
-                    success: function(data){
-                        if(data.resposta){
+                    data: JSON.stringify({ 'pergunta': pergunta }),
+                    success: function (data) {
+                        if (data.resposta) {
                             $('#chat-container .message.system-message:last p:nth-of-type(2)').html(data.resposta);
                             // Atualizar o timestamp
                             var timestamp = new Date();
@@ -90,11 +92,11 @@
                             var timeString = hours + ':' + minutes;
                             $('#chat-container .message.system-message:last .timestamp').text(timeString);
                             $('#chat-container').scrollTop($('#chat-container')[0].scrollHeight);
-                        } else if(data.erro){
+                        } else if (data.erro) {
                             $('#chat-container .message.system-message:last p:nth-of-type(2)').html(data.erro);
                         }
                     },
-                    error: function(){
+                    error: function () {
                         $('#chat-container .message.system-message:last p:nth-of-type(2)').html('Erro ao obter resposta.');
                     }
                 });
@@ -102,4 +104,5 @@
         });
     </script>
 </body>
+
 </html>
